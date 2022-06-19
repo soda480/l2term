@@ -2,12 +2,12 @@ import os
 import sys
 import logging
 from collections import UserList
-import cursor
 from colorama import init as colorama_init
 from colorama import Style
 from colorama import Fore
 from colorama import Back
 from colorama import Cursor
+import cursor
 
 logger = logging.getLogger(__name__)
 
