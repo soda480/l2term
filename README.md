@@ -5,7 +5,7 @@
 [![vulnerabilities](https://img.shields.io/badge/vulnerabilities-None-brightgreen)](https://pypi.org/project/bandit/)
 [![python](https://img.shields.io/badge/python-3.9-teal)](https://www.python.org/downloads/)
 
-The `l2term` module provides a convenient way to dynamically display a list to the terminal stderr data stream; the terminal will automatically update and reflect changes that are made to the associated list. The `l2term.Lines` class is a subclass of [collections.UserList](https://docs.python.org/3/library/collections.html#collections.UserList) and is tty aware thus it is safe to use in non-tty environments. This class takes a list instance as an argument and once instantiated the list is accessible via the data attribute of the instance object. The list can be any iterable, but its elements need to be printable; they should implement __str__ function. The intent of this class is to display relatively small lists to the terminal and dynamically update the terminal when list elements are upated, added or removed.
+The `l2term` module provides a convenient way to dynamically display a list to the terminal stderr data stream; the terminal will automatically update and reflect changes that are made to the associated list. The `l2term.Lines` class is a subclass of [collections.UserList](https://docs.python.org/3/library/collections.html#collections.UserList) and is tty aware thus it is safe to use in non-tty environments. This class takes a list instance as an argument and when instantiated the list is accessible via the data attribute. The list can be any iterable, but its elements need to be printable; they should implement __str__ function. The intent of this class is to display relatively small lists to the terminal and dynamically update the terminal when list elements are upated, added or removed.
 
 ### Installation
 ```bash
@@ -14,7 +14,7 @@ pip install l2term
 
 #### [example1](https://github.com/soda480/l2term/blob/main/examples/example1.py)
 
-Initially create an empty list then use document generator to add sentences to the list randomly. As sentences are added the list the respective line in the terminal is updated.
+Initially create an empty list then use document generator to add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated as well.
 
 <details><summary>Code</summary>
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
 #### [example2](https://github.com/soda480/l2term/blob/main/examples/example2.py)
 
-Initially create an empty list then use document generator to add sentences to the list randomly. As sentences are added the list the respective line in the terminal is updated. Also show how the terminal behaves when items are added to and removed from the list.
+Initially create an empty list then use document generator to add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated as well. Also show how the terminal behaves when items are added to and removed from the list.
 
 <details><summary>Code</summary>
 
