@@ -13,7 +13,7 @@ use_plugin('pypi:pybuilder_anybadge')
 
 name = 'l2term'
 authors = [Author('Emilio Reyes', 'soda480@gmail.com')]
-summary = 'Display list to terminal interactively'
+summary = 'Dynamically display a list to the terminal stderr data stream'
 url = 'https://github.com/soda480/l2term'
 version = '0.1.0'
 default_task = [
