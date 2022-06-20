@@ -214,21 +214,27 @@ class TestLines(unittest.TestCase):
         with self.assertRaises(ValueError):
             Lines([''] * 300)
 
-    def test__sanitize_Should_ReturnExpected_When_LessThanMaxChars(self, *patches):
+    def test__sanitize_Should_ReturnExpected_When_StrLessThanMaxChars(self, *patches):
         term = Lines([''] * 3)
         text = 'hello world'
         result = term._sanitize(text)
         self.assertEqual(result, text)
 
-    def test__sanitize_Should_ReturnExpected_When_GreaterThanMaxChars(self, *patches):
+    def test__sanitize_Should_ReturnExpected_When_StrGreaterThanMaxChars(self, *patches):
         term = Lines([''] * 3)
         text = 'hello' * 40
         result = term._sanitize(text)
         expected_result = f'{text[0:MAX_CHARS - 3]}...'
         self.assertEqual(result, expected_result)
 
-    def test__sanitize_Should_ReturnExpected_When_NoText(self, *patches):
+    def test__sanitize_Should_ReturnExpected_When_NoData(self, *patches):
         term = Lines([''] * 3)
         text = ''
         result = term._sanitize(text)
         self.assertEqual(result, text)
+
+    def test__sanitize_Should_ReturnExpected_When_List(self, *patches):
+        term = Lines([''] * 3)
+        text = ['', 'i', ' ', 'a', 'm']
+        result = term._sanitize(text)
+        self.assertEqual(result, 'i am')

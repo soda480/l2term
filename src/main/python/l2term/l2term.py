@@ -174,11 +174,14 @@ class Lines(UserList):
             if len(self.data) > MAX_LINES:
                 raise ValueError(f'number of items to display exceeds allowed size {MAX_LINES}')
 
-    def _sanitize(self, text):
-        """ sanitize text
+    def _sanitize(self, item):
+        """ sanitize item
         """
-        if text:
-            text = text.splitlines()[0]
-            if len(text) > self._max_chars:
-                text = f'{text[0:self._max_chars - 3]}...'
-        return text
+        if item:
+            if isinstance(item, str):
+                item = item.splitlines()[0]
+                if len(item) > self._max_chars:
+                    item = f'{item[0:self._max_chars - 3]}...'
+            else:
+                item = ''.join(i for i in item)
+        return item

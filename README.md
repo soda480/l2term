@@ -91,6 +91,10 @@ if __name__ == '__main__':
 
 ![example2](https://raw.githubusercontent.com/soda480/l2term/main/docs/images/example2.gif)
 
+#### Example3
+
+A Conway [Game-Of-Life](https://github.com/soda480/game-of-life) implementation that uses `l2term` to display game to the terminal.
+
 
 ### Development
 
