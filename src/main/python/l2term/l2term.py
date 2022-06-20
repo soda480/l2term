@@ -12,7 +12,7 @@ import cursor
 logger = logging.getLogger(__name__)
 
 MAX_LINES = 75
-MAX_CHARS = 120
+MAX_CHARS = 150
 CLEAR_EOL = '\033[K'
 
 
@@ -177,11 +177,13 @@ class Lines(UserList):
     def _sanitize(self, item):
         """ sanitize item
         """
-        if item:
-            if isinstance(item, str):
-                item = item.splitlines()[0]
-                if len(item) > self._max_chars:
-                    item = f'{item[0:self._max_chars - 3]}...'
-            else:
-                item = ''.join(i for i in item)
+        if type(item).__str__ is not object.__str__:
+            # if item has __str__ that is not from object then lets convert it
+            item = str(item)
+        if isinstance(item, str):
+            item = item.split('\n')[0]
+            if len(item) > self._max_chars:
+                item = f'{item[0:self._max_chars - 3]}...'
+        else:
+            item = ''.join(i for i in item)
         return item
