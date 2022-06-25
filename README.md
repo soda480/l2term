@@ -15,7 +15,7 @@ pip install l2term
 
 #### [example1](https://github.com/soda480/l2term/blob/main/examples/example1.py)
 
-Initially create an empty list then use document generator to add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated as well.
+Initially create an empty list then add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated.
 
 <details><summary>Code</summary>
 
@@ -28,9 +28,9 @@ from l2term import Lines
 def main():
     print('Generating random sentences...')
     docgen = DocumentGenerator()
-    with Lines([''] * 15) as lines:
+    with Lines(size=15) as lines:
         for _ in range(200):
-            index = random.randint(0, len(lines.data) - 1)
+            index = random.randint(0, len(lines) - 1)
             lines[index] = docgen.sentence()
             time.sleep(.05)
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 #### [example2](https://github.com/soda480/l2term/blob/main/examples/example2.py)
 
-Initially create an empty list then use document generator to add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated as well. Also show how the terminal behaves when items are added to and removed from the list.
+Initially create an empty list then add sentences to the list at random indexes. As sentences are updated within the list the respective line in the terminal is updated. Also show how the terminal behaves when items are added to and removed from the list.
 
 <details><summary>Code</summary>
 
@@ -57,9 +57,9 @@ from l2term import Lines
 def main():
     print('Generating random sentences...')
     docgen = DocumentGenerator()
-    with Lines([''] * 10) as lines:
+    with Lines(data=[''] * 10) as lines:
         for _ in range(100):
-            index = random.randint(0, len(lines.data) - 1)
+            index = random.randint(0, len(lines) - 1)
             lines[index] = docgen.sentence()
         for _ in range(100):
             update = ['update'] * 18
@@ -68,19 +68,19 @@ def main():
             clear = ['clear']
             choice = random.choice(append + pop + clear + update)
             if choice == 'pop':
-                if len(lines.data) > 0:
-                    index = random.randint(0, len(lines.data) - 1)
+                if len(lines) > 0:
+                    index = random.randint(0, len(lines) - 1)
                     lines.pop(index)
             elif choice == 'append':
                 lines.append(docgen.sentence())
             elif choice == 'update':
-                if len(lines.data) > 0:
-                    index = random.randint(0, len(lines.data) - 1)
+                if len(lines) > 0:
+                    index = random.randint(0, len(lines) - 1)
                     lines[index] = docgen.sentence()
             else:
-                if len(lines.data) > 0:
+                if len(lines) > 0:
                     lines.pop()
-                if len(lines.data) > 0:
+                if len(lines) > 0:
                     lines.pop()
             time.sleep(.1)
 
@@ -92,7 +92,11 @@ if __name__ == '__main__':
 
 ![example2](https://raw.githubusercontent.com/soda480/l2term/main/docs/images/example2.gif)
 
-#### Example3
+#### [example3](https://github.com/soda480/l2term/blob/main/examples/example3.py)
+
+This example demonstrates the `write` method that uses a list of unique indexes to determine the index within the data list that should be updated. The message follows a predetermined convention that contains the identifier that is used to determine the index. The method extracts the identifer from the message and uses it with the indices to get the index within the list.
+
+#### Example4
 
 A Conway [Game-Of-Life](https://github.com/soda480/game-of-life) implementation that uses `l2term` to display game to the terminal.
 
