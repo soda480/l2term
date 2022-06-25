@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import logging
 from collections import UserList
@@ -18,16 +19,21 @@ CLEAR_EOL = '\033[K'
 
 class Lines(UserList):
 
-    def __init__(self, *args, show_index=True):
+    def __init__(self, data=None, size=None, indices=None, show_index=True):
         """ constructor
         """
         logger.debug('executing Lines constructor')
-        super().__init__(*args)
+        if data is None:
+            if not size:
+                raise ValueError('a data or size attribute must be provided')
+            data = [''] * size
+        super().__init__(initlist=data)
         self._max_chars = MAX_CHARS
         self._fill = len(str(len(self.data)))
-        self._validate()
         self._current = 0
         self._show_index = show_index
+        self._indices = indices
+        self._validate()
         colorama_init()
 
     def __enter__(self):
@@ -163,6 +169,12 @@ class Lines(UserList):
             cursor.hide()
 
     def _validate(self):
+        """ execute validation methods
+        """
+        self._validate_size()
+        self._validate_indices()
+
+    def _validate_size(self):
         """ validate and set max chars if tty
         """
         if sys.stderr.isatty():
@@ -173,6 +185,15 @@ class Lines(UserList):
         else:
             if len(self.data) > MAX_LINES:
                 raise ValueError(f'number of items to display exceeds allowed size {MAX_LINES}')
+
+    def _validate_indices(self):
+        """ validate indices
+        """
+        if self._indices:
+            if len(set(self._indices)) != len(self._indices):
+                raise ValueError('all elements of indices must be unique')
+            if len(self._indices) != len(self.data):
+                raise ValueError('size of indices must equal size of data')
 
     def _sanitize(self, item):
         """ sanitize item
@@ -187,3 +208,16 @@ class Lines(UserList):
         else:
             item = ''.join(i for i in item)
         return item
+
+    def write(self, message):
+        """ update appropriate line with message
+        """
+        if self._indices is None:
+            return
+        regex = r'^(?P<identifier>.*)->(?P<remainder>.*)$'
+        match = re.match(regex, message)
+        if match:
+            identifier = match.group('identifier')
+            index = self._indices.index(identifier)
+            if index is not None:
+                self[index] = match.group('remainder')

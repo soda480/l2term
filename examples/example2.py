@@ -6,9 +6,9 @@ from l2term import Lines
 def main():
     print('Generating random sentences...')
     docgen = DocumentGenerator()
-    with Lines([''] * 10) as lines:
+    with Lines(data=[''] * 10) as lines:
         for _ in range(100):
-            index = random.randint(0, len(lines.data) - 1)
+            index = random.randint(0, len(lines) - 1)
             lines[index] = docgen.sentence()
         for _ in range(100):
             update = ['update'] * 18
@@ -17,19 +17,19 @@ def main():
             clear = ['clear']
             choice = random.choice(append + pop + clear + update)
             if choice == 'pop':
-                if len(lines.data) > 0:
-                    index = random.randint(0, len(lines.data) - 1)
+                if len(lines) > 0:
+                    index = random.randint(0, len(lines) - 1)
                     lines.pop(index)
             elif choice == 'append':
                 lines.append(docgen.sentence())
             elif choice == 'update':
-                if len(lines.data) > 0:
-                    index = random.randint(0, len(lines.data) - 1)
+                if len(lines) > 0:
+                    index = random.randint(0, len(lines) - 1)
                     lines[index] = docgen.sentence()
             else:
-                if len(lines.data) > 0:
+                if len(lines) > 0:
                     lines.pop()
-                if len(lines.data) > 0:
+                if len(lines) > 0:
                     lines.pop()
             time.sleep(.1)
 
