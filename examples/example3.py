@@ -7,12 +7,12 @@ from l2term import Lines
 def main():
     print('Generating random sentences...')
     size = 15
-    indices = [names.get_full_name() for _ in range(size)]
+    lookup = [names.get_full_name() for _ in range(size)]
     docgen = DocumentGenerator()
-    with Lines(size=size, indices=indices) as lines:
+    with Lines(size=size, lookup=lookup) as lines:
         for _ in range(200):
             index = random.randint(0, len(lines) - 1)
-            lines.write(f'{indices[index]}->{docgen.sentence()}')
+            lines.write(f'{lookup[index]} -> {docgen.sentence()}')
             time.sleep(.05)
 
 if __name__ == '__main__':

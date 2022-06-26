@@ -209,15 +209,29 @@ class Lines(UserList):
             item = ''.join(i for i in item)
         return item
 
-    def write(self, message):
-        """ update appropriate line with message
+    def get_index_message(self, item):
+        """ return index and message contained within item
         """
-        if self._lookup is None:
-            return
-        regex = r'^(?P<identifier>.*)->(?P<remainder>.*)$'
-        match = re.match(regex, message)
-        if match:
-            identifier = match.group('identifier')
-            index = self._lookup.index(identifier)
-            if index is not None:
-                self[index] = match.group('remainder')
+        if self._lookup:
+            # possible future enhancement is for caller to specify regex of item
+            regex = r'^(?P<identity>.*)->(?P<message>.*)$'
+            match = re.match(regex, item)
+            if match:
+                identity = match.group('identity').strip()
+                try:
+                    index = self._lookup.index(identity)
+                except ValueError:
+                    index = None
+                if index is not None:
+                    message = match.group('message').lstrip()
+                    return index, message
+        return None, item
+
+    def write(self, item):
+        """ update appropriate line with message contained within item
+            line is determined by extracting the identity contained within item
+            the index is determined getting the index of the identity from the lookup table
+        """
+        index, message = self.get_index_message(item)
+        if index is not None:
+            self[index] = message
