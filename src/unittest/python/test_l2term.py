@@ -216,11 +216,11 @@ class TestLines(unittest.TestCase):
 
     def test__validate_Should_RaiseValueError_When_IndicesAreNotUnique(self, *patches):
         with self.assertRaises(ValueError):
-            Lines(size=3, indices=['a', 'a', 'a'])
+            Lines(size=3, lookup=['a', 'a', 'a'])
 
     def test__validate_Should_RaiseValueError_When_IndicesAreNotSameSizeAsData(self, *patches):
         with self.assertRaises(ValueError):
-            Lines(size=2, indices=['a', 'b', 'c'])
+            Lines(size=2, lookup=['a', 'b', 'c'])
 
     def test__constructor_Should_RaiseValueError_When_NoDataOrSizeAttributesProvided(self, *patches):
         with self.assertRaises(ValueError):
@@ -252,8 +252,34 @@ class TestLines(unittest.TestCase):
         self.assertEqual(result, 'i am')
         lines.write('i am')
 
-    def test__write_Should_UpdateList_When_MessageMatches(self, *patches):
-        lines = Lines(size=3, indices=['fobia', 'mana', 'moenia'])
-        lines.write('fobia->dios bendiga los gusanos')
-        self.assertEqual(lines[0], 'dios bendiga los gusanos')
+    @patch('l2term.Lines.get_index_message')
+    def test__write_Should_UpdateList_When_MessageMatches(self, get_index_message_patch, *patches):
+        get_index_message_patch.return_value = 13, 'dios bendiga los gusanos'
+        lines = Lines(size=20)
+        lines.write('fobia -> dios bendiga los gusanos')
+        self.assertEqual(lines[13], 'dios bendiga los gusanos')
+
+        get_index_message_patch.return_value = None, '--original-message'
         lines.write('miel de escorpion')
+        self.assertEqual(lines[13], 'dios bendiga los gusanos')
+
+    def test_get_index_message_Should_ReturnExtractedIndexAndMessage_When_LookupTable(self, *patches):
+        lines = Lines(size=3, lookup=['fobia', 'mana', 'moenia'])
+        index, message = lines.get_index_message('mana -> en el muelle de san blas')
+        self.assertEqual(index, 1)
+        self.assertEqual(message, 'en el muelle de san blas')
+
+        index, message = lines.get_index_message('julieta venegas ->  el presente (unplugged)  ')
+        self.assertIsNone(index)
+        self.assertEqual(message, 'julieta venegas ->  el presente (unplugged)  ')
+
+    def test_get_index_message_Should_ReturnExtractedIndexAndMessage_When_NoLookupTable(self, *patches):
+        lines = Lines(size=3)
+        index, message = lines.get_index_message('mana -> en el muelle de san blas')
+        self.assertIsNone(index)
+        self.assertEqual(message, 'mana -> en el muelle de san blas')
+
+    def write(self, item):
+        index, message = self.get_index_message(item)
+        if index is not None:
+            self[index] = message
