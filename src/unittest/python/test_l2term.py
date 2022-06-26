@@ -216,11 +216,11 @@ class TestLines(unittest.TestCase):
 
     def test__validate_Should_RaiseValueError_When_IndicesAreNotUnique(self, *patches):
         with self.assertRaises(ValueError):
-            Lines(size=3, indices=['a', 'a', 'a'])
+            Lines(size=3, lookup=['a', 'a', 'a'])
 
     def test__validate_Should_RaiseValueError_When_IndicesAreNotSameSizeAsData(self, *patches):
         with self.assertRaises(ValueError):
-            Lines(size=2, indices=['a', 'b', 'c'])
+            Lines(size=2, lookup=['a', 'b', 'c'])
 
     def test__constructor_Should_RaiseValueError_When_NoDataOrSizeAttributesProvided(self, *patches):
         with self.assertRaises(ValueError):
@@ -253,7 +253,7 @@ class TestLines(unittest.TestCase):
         lines.write('i am')
 
     def test__write_Should_UpdateList_When_MessageMatches(self, *patches):
-        lines = Lines(size=3, indices=['fobia', 'mana', 'moenia'])
+        lines = Lines(size=3, lookup=['fobia', 'mana', 'moenia'])
         lines.write('fobia->dios bendiga los gusanos')
         self.assertEqual(lines[0], 'dios bendiga los gusanos')
         lines.write('miel de escorpion')

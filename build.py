@@ -15,7 +15,7 @@ name = 'l2term'
 authors = [Author('Emilio Reyes', 'soda480@gmail.com')]
 summary = 'Dynamically display a list to the terminal stderr data stream'
 url = 'https://github.com/soda480/l2term'
-version = '0.1.3'
+version = '0.1.4'
 default_task = [
     'clean',
     'analyze',

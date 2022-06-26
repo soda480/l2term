@@ -19,7 +19,7 @@ CLEAR_EOL = '\033[K'
 
 class Lines(UserList):
 
-    def __init__(self, data=None, size=None, indices=None, show_index=True):
+    def __init__(self, data=None, size=None, lookup=None, show_index=True):
         """ constructor
         """
         logger.debug('executing Lines constructor')
@@ -32,7 +32,7 @@ class Lines(UserList):
         self._fill = len(str(len(self.data)))
         self._current = 0
         self._show_index = show_index
-        self._indices = indices
+        self._lookup = lookup
         self._validate()
         colorama_init()
 
@@ -172,7 +172,7 @@ class Lines(UserList):
         """ execute validation methods
         """
         self._validate_size()
-        self._validate_indices()
+        self._validate_lookup()
 
     def _validate_size(self):
         """ validate and set max chars if tty
@@ -186,14 +186,14 @@ class Lines(UserList):
             if len(self.data) > MAX_LINES:
                 raise ValueError(f'number of items to display exceeds allowed size {MAX_LINES}')
 
-    def _validate_indices(self):
-        """ validate indices
+    def _validate_lookup(self):
+        """ validate lookup
         """
-        if self._indices:
-            if len(set(self._indices)) != len(self._indices):
-                raise ValueError('all elements of indices must be unique')
-            if len(self._indices) != len(self.data):
-                raise ValueError('size of indices must equal size of data')
+        if self._lookup:
+            if len(set(self._lookup)) != len(self._lookup):
+                raise ValueError('all elements of lookup must be unique')
+            if len(self._lookup) != len(self.data):
+                raise ValueError('size of lookup must equal size of data')
 
     def _sanitize(self, item):
         """ sanitize item
@@ -212,12 +212,12 @@ class Lines(UserList):
     def write(self, message):
         """ update appropriate line with message
         """
-        if self._indices is None:
+        if self._lookup is None:
             return
         regex = r'^(?P<identifier>.*)->(?P<remainder>.*)$'
         match = re.match(regex, message)
         if match:
             identifier = match.group('identifier')
-            index = self._indices.index(identifier)
+            index = self._lookup.index(identifier)
             if index is not None:
                 self[index] = match.group('remainder')
