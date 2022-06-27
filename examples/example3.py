@@ -9,7 +9,7 @@ def main():
     size = 15
     lookup = [names.get_full_name() for _ in range(size)]
     docgen = DocumentGenerator()
-    with Lines(size=size, lookup=lookup) as lines:
+    with Lines(lookup=lookup) as lines:
         for _ in range(200):
             index = random.randint(0, len(lines) - 1)
             lines.write(f'{lookup[index]} -> {docgen.sentence()}')

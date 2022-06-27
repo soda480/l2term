@@ -23,17 +23,15 @@ class Lines(UserList):
         """ constructor
         """
         logger.debug('executing Lines constructor')
-        if data is None:
-            if not size:
-                raise ValueError('a data or size attribute must be provided')
-            data = [''] * size
+        data = Lines._get_data(data, size, lookup)
+        Lines._validate_lookup(lookup, data)
+        Lines._validate_data(data)
         super().__init__(initlist=data)
         self._max_chars = MAX_CHARS
         self._fill = len(str(len(self.data)))
         self._current = 0
         self._show_index = show_index
         self._lookup = lookup
-        self._validate()
         colorama_init()
 
     def __enter__(self):
@@ -168,33 +166,6 @@ class Lines(UserList):
         if sys.stderr.isatty():
             cursor.hide()
 
-    def _validate(self):
-        """ execute validation methods
-        """
-        self._validate_size()
-        self._validate_lookup()
-
-    def _validate_size(self):
-        """ validate and set max chars if tty
-        """
-        if sys.stderr.isatty():
-            size = os.get_terminal_size()
-            if len(self.data) > size.lines:
-                raise ValueError(f'number of items to display exceeds current terminal size {size.lines}')
-            # self._max_chars = size.columns
-        else:
-            if len(self.data) > MAX_LINES:
-                raise ValueError(f'number of items to display exceeds allowed size {MAX_LINES}')
-
-    def _validate_lookup(self):
-        """ validate lookup
-        """
-        if self._lookup:
-            if len(set(self._lookup)) != len(self._lookup):
-                raise ValueError('all elements of lookup must be unique')
-            if len(self._lookup) != len(self.data):
-                raise ValueError('size of lookup must equal size of data')
-
     def _sanitize(self, item):
         """ sanitize item
         """
@@ -235,3 +206,38 @@ class Lines(UserList):
         index, message = self.get_index_message(item)
         if index is not None:
             self[index] = message
+
+    @staticmethod
+    def _get_data(data, size, lookup):
+        """ return data list or generate from size or lookup
+        """
+        if data:
+            return data
+        if not size:
+            if not lookup:
+                raise ValueError('a data, size or lookup attribute must be provided')
+            size = len(lookup)
+        return [''] * size
+
+    @staticmethod
+    def _validate_lookup(lookup, data):
+        """ validate lookup list is unique and same length as data
+        """
+        if lookup:
+            if len(set(lookup)) != len(lookup):
+                raise ValueError('all elements in lookup must be unique')
+            if len(lookup) != len(data):
+                raise ValueError('size of lookup must equal size of data')
+
+    @staticmethod
+    def _validate_data(data):
+        """ validate data list can be displayed on terminal
+        """
+        if sys.stderr.isatty():
+            size = os.get_terminal_size()
+            if len(data) > size.lines:
+                raise ValueError(f'number of items to display exceeds current terminal size {size.lines}')
+            # self._max_chars = size.columns
+        else:
+            if len(data) > MAX_LINES:
+                raise ValueError(f'number of items to display exceeds allowed size {MAX_LINES}')

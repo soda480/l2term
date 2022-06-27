@@ -2,28 +2,11 @@ import unittest
 from mock import patch
 from mock import call
 from mock import Mock
-from mock import MagicMock
-
 from l2term import Lines
-from l2term.l2term import MAX_LINES
 from l2term.l2term import MAX_CHARS
-
-import sys
-import logging
-logger = logging.getLogger(__name__)
 
 
 class TestLines(unittest.TestCase):
-
-    def setUp(self):
-        """ setup
-        """
-        pass
-
-    def tearDown(self):
-        """ tear down
-        """
-        pass
 
     @patch('l2term.Lines._move_up')
     def test__get_move_char_Should_ReturnExpected_When_MovingUp(self, move_up_patch, *patches):
@@ -62,7 +45,7 @@ class TestLines(unittest.TestCase):
         self.assertEqual(result, up_patch.return_value)
         self.assertEqual(lines._current, 7)
 
-    @patch('l2term.Lines._validate')
+    @patch('l2term.Lines._validate_data')
     @patch('l2term.l2term.sys.stderr')
     @patch('l2term.l2term.cursor')
     def test__hide_cursor_Should_CallHideCursor_When_Tty(self, cursor_patch, stderr_patch, *patches):
@@ -79,7 +62,7 @@ class TestLines(unittest.TestCase):
         lines.hide_cursor()
         cursor_patch.hide.assert_not_called()
 
-    @patch('l2term.Lines._validate')
+    @patch('l2term.Lines._validate_data')
     @patch('l2term.l2term.sys.stderr')
     @patch('l2term.l2term.cursor')
     def test__show_cursor_Should_CallShowCursor_When_Tty(self, cursor_patch, stderr_patch, *patches):
@@ -96,7 +79,7 @@ class TestLines(unittest.TestCase):
         lines.show_cursor()
         cursor_patch.show.assert_not_called()
 
-    @patch('l2term.Lines._validate')
+    @patch('l2term.Lines._validate_data')
     @patch('l2term.Lines.print_lines')
     @patch('l2term.Lines.hide_cursor')
     @patch('l2term.Lines.show_cursor')
@@ -153,7 +136,7 @@ class TestLines(unittest.TestCase):
         for number in range(3):
             self.assertTrue(call(number) in clear_line_patch.mock_calls)
 
-    @patch('l2term.Lines._validate')
+    @patch('l2term.Lines._validate_data')
     @patch('l2term.l2term.sys.stderr.isatty', return_value=True)
     @patch('l2term.Lines._get_move_char')
     @patch('builtins.print')
@@ -163,7 +146,7 @@ class TestLines(unittest.TestCase):
         get_move_char_patch.assert_called_once_with(1)
         print_patch.assert_called()
 
-    @patch('l2term.Lines._validate')
+    @patch('l2term.Lines._validate_data')
     @patch('l2term.Lines._get_move_char')
     @patch('l2term.l2term.sys.stderr')
     @patch('builtins.print')
@@ -204,23 +187,36 @@ class TestLines(unittest.TestCase):
 
     @patch('l2term.l2term.sys.stderr.isatty', return_value=True)
     @patch('l2term.l2term.os.get_terminal_size')
-    def test__validate_Should_RaiseValueError_When_TtyTerminalLinesLessThanListSize(self, get_terminal_size_patch, *patches):
+    def test__init_Should_RaiseValueError_When_TtyTerminalLinesLessThanDataSize(self, get_terminal_size_patch, *patches):
         get_terminal_size_patch.return_value = Mock(lines=2)
         with self.assertRaises(ValueError):
             Lines(size=3)
 
     @patch('l2term.l2term.sys.stderr.isatty', return_value=False)
-    def test__validate_Should_RaiseValueError_When_NoTtyListSizeGreaterThanMaxAllowed(self, *patches):
+    def test__init_Should_RaiseValueError_When_NoTtyListSizeGreaterThanMaxAllowed(self, *patches):
         with self.assertRaises(ValueError):
             Lines(size=300)
 
-    def test__validate_Should_RaiseValueError_When_IndicesAreNotUnique(self, *patches):
+    def test__init_Should_RaiseValueError_When_LookupItemsAreNotUnique(self, *patches):
         with self.assertRaises(ValueError):
             Lines(size=3, lookup=['a', 'a', 'a'])
 
-    def test__validate_Should_RaiseValueError_When_IndicesAreNotSameSizeAsData(self, *patches):
+    def test__init_Should_RaiseValueError_When_LookupLengthIsNotSameAsSize(self, *patches):
         with self.assertRaises(ValueError):
             Lines(size=2, lookup=['a', 'b', 'c'])
+
+    def test__init_Should_RaiseValueError_When_LookupLengthIsNotSameAsDataSize(self, *patches):
+        with self.assertRaises(ValueError):
+            Lines(data=['', ''], lookup=['a', 'b', 'c'])
+
+    def test__init_Should_RaiseValueError_When_NoDataSizeLookupAttributes(self, *patches):
+        with self.assertRaises(ValueError):
+            Lines()
+
+    def test__init_Should_SetDataSize_When_LookupNoDataNoSize(self, *patches):
+        lookup = ['a', 'b', 'c']
+        lines = Lines(lookup=lookup)
+        self.assertEqual(len(lines.data), len(lookup))
 
     def test__constructor_Should_RaiseValueError_When_NoDataOrSizeAttributesProvided(self, *patches):
         with self.assertRaises(ValueError):
