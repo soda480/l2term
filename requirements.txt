@@ -1,2 +1,2 @@
-colorama==0.4.5
-cursor==1.3.5
+colorama~=0.4.5
+cursor~=1.3.5
