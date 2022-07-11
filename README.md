@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/soda480/l2term/branch/main/graph/badge.svg?token=IYQBFG9J8G)](https://codecov.io/gh/soda480/l2term)
 [![vulnerabilities](https://img.shields.io/badge/vulnerabilities-None-brightgreen)](https://pypi.org/project/bandit/)
 [![PyPI version](https://badge.fury.io/py/l2term.svg)](https://badge.fury.io/py/l2term)
-[![python](https://img.shields.io/badge/python-3.9-teal)](https://www.python.org/downloads/)
+[![python](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-teal)](https://www.python.org/downloads/)
 
 The `l2term` module provides a convenient way to dynamically display a list to the terminal stderr data stream; the terminal will automatically update and reflect changes that are made to the associated list. The `l2term.Lines` class is a subclass of [collections.UserList](https://docs.python.org/3/library/collections.html#collections.UserList) and is tty aware thus it is safe to use in non-tty environments. This class takes a list instance as an argument and when instantiated the list is accessible via the data attribute. The list can be any iterable, but its elements need to be printable; they should implement __str__ function. The intent of this class is to display relatively small lists to the terminal and dynamically update the terminal when list elements are upated, added or removed.
 
@@ -119,7 +119,7 @@ docker container run \
 -it \
 -v $PWD:/code \
 l2term:latest \
-/bin/bash
+bash
 ```
 
 Execute the build:
